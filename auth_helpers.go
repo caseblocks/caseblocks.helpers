@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func findUserFromId(req *http.Request, res http.ResponseWriter, db *sqlx.DB) (User, error) {
+func FindUserFromId(req *http.Request, res http.ResponseWriter, db *sqlx.DB) (User, error) {
 	token := req.Header.Get("AUTH_TOKEN")
 	user := User{}
 	if token != "" {
