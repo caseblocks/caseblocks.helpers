@@ -2,7 +2,6 @@ package helpers
 
 import (
 	"errors"
-	"fmt"
 	"github.com/adeven/gorails/marshal"
 	"github.com/adeven/gorails/session"
 	"net/http"
@@ -58,9 +57,6 @@ func findUserIdInRequest(req *http.Request) (int64, error) {
 	var user_id int64
 	found := false
 	cookie, err := req.Cookie("_caseblocks_session")
-	for _, cookie := range req.Cookies() {
-		fmt.Println(cookie.Name)
-	}
 	if err != nil {
 		return 0, errors.New("User cookie not found")
 	}
