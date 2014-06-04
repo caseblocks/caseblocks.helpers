@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/garyburd/redigo/redis"
 	"time"
+	"os"
 )
 
 func jid() (string, error) {
@@ -40,7 +41,9 @@ func LauchSidekiqJob(queue string, class string, params []map[string]interface{}
 	//  logger.Printf("%#v\n", bucket)
 	// }
 
-	c, err := redis.Dial("tcp", ":6379")
+	redis_host := os.Getenv("REDIS_HOST")
+
+	c, err := redis.Dial("tcp", fmt.Sprintf("%s:6379", redis_host))
 	if err != nil {
 		return err
 	}
