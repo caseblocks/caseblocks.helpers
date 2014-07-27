@@ -2,16 +2,15 @@ package helpers
 
 import (
 	"github.com/jmoiron/sqlx"
-	"log"
 )
 
-func NewSqlConnection(connectionString string, logger *log.Logger) *sqlx.DB {
+func NewSqlConnection(connectionString string, logger Log) *sqlx.DB {
 
 	if logger == nil {
-		logger = Logger()
+		logger = NewConsoleLogger()
 	}
 
 	db, err := sqlx.Connect("mysql", connectionString)
-	PanicIf(err, logger)
+	PanicToLogIf(err, logger)
 	return db
 }

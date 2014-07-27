@@ -1,16 +1,21 @@
 package helpers
 
 import (
-	"log"
-	"os"
+	"fmt"
 )
 
-func PanicIf(err error, logger *log.Logger) {
+func PanicToLogIf(err error, logger Log) {
 	if err != nil {
-		logger.Panicln(err)
+		logger.Panic(err.Error())
 	}
 }
 
-func Logger() *log.Logger {
-	return log.New(os.Stdout, "", log.LstdFlags)
+func PanicIf(err error) {
+	if err != nil {
+		NewConsoleLogger().Panic(err.Error())
+	}
+}
+
+func Ap(something interface{}) {
+	fmt.Printf("\n%#v\n", something)
 }
