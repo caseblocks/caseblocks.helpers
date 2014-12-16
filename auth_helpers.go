@@ -9,6 +9,9 @@ import (
 
 func FindUserFromId(req *http.Request, res http.ResponseWriter, db *sqlx.DB) (User, error) {
 	token := req.Header.Get("AUTH_TOKEN")
+	if token == "" {
+		token = req.Header.Get("Auth_Token")
+	}
 	user := User{}
 	if token != "" {
 		getUserErr := db.Get(&user, "select id, account_id, is_account_admin from case_blocks_users where authentication_token=?", token)
