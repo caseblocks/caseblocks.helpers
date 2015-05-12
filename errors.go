@@ -2,6 +2,8 @@ package helpers
 
 import (
 	"fmt"
+
+	"github.com/martini-contrib/render"
 )
 
 func PanicToLogIf(err error, logger Log) {
@@ -18,4 +20,16 @@ func PanicIf(err error) {
 
 func Ap(something interface{}) {
 	fmt.Printf("\n%#v\n", something)
+}
+
+func RespondWithError(err error, statusCode int, r render.Render) {
+	var msg string
+	switch statusCode {
+	case 422:
+		msg = "Bad request."
+	case 500:
+		msg = "Unable to process request."
+	}
+	fmt.Println(err)
+	r.JSON(statusCode, map[string]interface{}{"error": fmt.Sprintf("%s %s", msg, err)})
 }
