@@ -2,9 +2,10 @@ package helpers
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/go-martini/martini"
 	"github.com/jmoiron/sqlx"
-	"net/http"
 )
 
 func FindUserFromId(req *http.Request, res http.ResponseWriter, db *sqlx.DB) (User, error) {
@@ -41,6 +42,14 @@ func FindUserFromId(req *http.Request, res http.ResponseWriter, db *sqlx.DB) (Us
 
 func RequireLogin(req *http.Request, res http.ResponseWriter, db *sqlx.DB, c martini.Context) {
 	if user, err := FindUserFromId(req, res, db); err == nil {
+		c.Map(user)
+	} else {
+		http.Redirect(res, req, "/users/sign_in", http.StatusFound)
+	}
+}
+
+func RequireAdmin(req *http.Request, res http.ResponseWriter, db *sqlx.DB, c martini.Context) {
+	if user, err := FindUserFromId(req, res, db); err == nil && user.IsAccountAdmin {
 		c.Map(user)
 	} else {
 		http.Redirect(res, req, "/users/sign_in", http.StatusFound)
