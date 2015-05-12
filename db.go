@@ -1,6 +1,8 @@
 package helpers
 
 import (
+	"time"
+
 	"github.com/jmoiron/sqlx"
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
@@ -36,4 +38,8 @@ func ConvertStringsToBSONs(ids []string) []bson.ObjectId {
 		results[i] = ConvertStringToBSON(id)
 	}
 	return results
+}
+
+func NowTS() time.Time {
+	return time.Now().UTC()
 }
