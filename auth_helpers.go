@@ -19,9 +19,6 @@ func FindUserFromId(req *http.Request, res http.ResponseWriter, db *sqlx.DB) (Us
 		}
 	}
 	req.ParseForm()
-	fmt.Println("values")
-	fmt.Println(req.Form)
-
 	for formKey, formVals := range req.Form {
 		fmt.Println(formKey)
 		if strings.ToLower(formKey) == "auth_token" {
