@@ -4,14 +4,29 @@ import (
 	"fmt"
 	"net/http"
 
+	"strings"
+
 	"github.com/go-martini/martini"
 	"github.com/jmoiron/sqlx"
 )
 
 func FindUserFromId(req *http.Request, res http.ResponseWriter, db *sqlx.DB) (User, error) {
-	token := req.Header.Get("AUTH_TOKEN")
-	if token == "" {
-		token = req.Header.Get("Auth_Token")
+
+	var token string
+	for headerKey, headerVals := range req.Header {
+		if strings.ToLower(headerKey) == "auth_token" {
+			token = headerVals[0]
+		}
+	}
+	req.ParseForm()
+	fmt.Println("values")
+	fmt.Println(req.Form)
+
+	for formKey, formVals := range req.Form {
+		fmt.Println(formKey)
+		if strings.ToLower(formKey) == "auth_token" {
+			token = formVals[0]
+		}
 	}
 	user := User{}
 	if token != "" {
