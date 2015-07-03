@@ -42,8 +42,7 @@ func FindUserFromId(req *http.Request, res http.ResponseWriter, db *sqlx.DB) (Us
 		}
 		getUserErr := db.Get(&user, "select id, account_id, is_account_admin from case_blocks_users where id=?", userId)
 		if getUserErr != nil {
-			fmt.Println("user not found")
-			fmt.Println(userId)
+			fmt.Printf("User not found: %d", userId)
 			fmt.Println(getUserErr)
 			http.Error(res, "Not Authorized", http.StatusUnauthorized)
 			return user, err
