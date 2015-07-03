@@ -27,6 +27,7 @@ func FindUserFromId(req *http.Request, res http.ResponseWriter, db *sqlx.DB) (Us
 	}
 	user := User{}
 	if token != "" {
+		fmt.Printf("Looking for user with token %s", token)
 		getUserErr := db.Get(&user, "select id, account_id, is_account_admin from case_blocks_users where authentication_token=?", token)
 		if getUserErr != nil {
 			http.Error(res, "Not Authorized", http.StatusUnauthorized)
@@ -35,8 +36,7 @@ func FindUserFromId(req *http.Request, res http.ResponseWriter, db *sqlx.DB) (Us
 	} else {
 		userId, err := findUserIdInRequest(req)
 		if err != nil {
-			fmt.Println("user id not found")
-			fmt.Println(userId)
+			fmt.Println("Authentication token not found, no session cookie in request.")
 			http.Error(res, "Not Authorized", http.StatusUnauthorized)
 			return user, err
 		}
