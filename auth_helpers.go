@@ -59,6 +59,14 @@ func RequireLogin(req *http.Request, res http.ResponseWriter, db *sqlx.DB, c mar
 	}
 }
 
+func AllowAccessControl(res http.ResponseWriter) {
+	headers := res.Header()
+	headers.Set("Access-Control-Allow-Headers", "Origin, Content-Type, Accept, Authorization, Token")
+	headers.Set("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS")
+	headers.Set("Access-Control-Allow-Origin", "*")
+	headers.Set("Access-Control-Max-Age", "1728000")
+}
+
 func RequireAdmin(req *http.Request, res http.ResponseWriter, db *sqlx.DB, c martini.Context) {
 	if user, err := FindUserFromId(req, res, db); err == nil && user.IsAccountAdmin {
 		c.Map(user)
