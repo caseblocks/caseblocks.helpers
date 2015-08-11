@@ -43,3 +43,42 @@ func ConvertStringsToBSONs(ids []string) []bson.ObjectId {
 func NowTS() time.Time {
 	return time.Now().UTC()
 }
+
+type IArray []interface{}
+type IMap map[string]interface{}
+
+func BSONSafeElem(param interface{}) interface{} {
+	// fmt.Printf("Element: %s\n", reflect.TypeOf(param))
+	switch w := param.(type) {
+	case []interface{}:
+		return BSONSafeArray(w)
+	case bson.M:
+		return BSONSafeMap(w)
+	case bson.ObjectId:
+		return w.Hex()
+	case bson.Symbol:
+		return string(w)
+	}
+	return param
+}
+
+func BSONSafeMap(params bson.M) IMap {
+	results := make(IMap)
+	for k, v := range params {
+		results[k] = BSONSafeElem(v)
+	}
+	return results
+}
+
+func BSONSafeArray(params IArray) IArray {
+	l := len(params)
+	results := make(IArray, l)
+	for i, elem := range params {
+		results[i] = BSONSafeElem(elem)
+	}
+	return results
+}
+
+func BSONSafe(param interface{}) interface{} {
+	return BSONSafeElem(param)
+}

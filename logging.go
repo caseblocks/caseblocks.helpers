@@ -11,6 +11,7 @@ type Log interface {
 	Info(message string)
 	Debug(message string)
 	Panic(message string)
+	PanicErr(err error)
 }
 
 const (
@@ -34,6 +35,9 @@ func (l *DefaultLog) Debug(message string) {
 }
 func (l *DefaultLog) Panic(message string) {
 	l.Log.Panicf("PANIC-%s\n", message)
+}
+func (l *DefaultLog) PanicErr(err error) {
+	l.Log.Panicf("PANIC-%s\n", err)
 }
 
 func NewConsoleLogger() Log {
