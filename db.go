@@ -35,6 +35,17 @@ func FindRedisConnString() string {
 	return ""
 }
 
+func FindMongoConnString() string {
+	if os.Getenv("MONGO_HOST") != "" {
+		return os.Getenv("MONGO_HOST")
+	} else if os.Getenv("MONGODB_PORT_27017_TCP_ADDR") != "" && os.Getenv("MONGODB_PORT_27017_TCP_PORT") != "" {
+		return fmt.Sprintf("%s:%s",
+			os.Getenv("MONGODB_PORT_27017_TCP_ADDR"),
+			os.Getenv("MONGODB_PORT_27017_TCP_PORT"))
+	}
+	return ""
+}
+
 func NewSqlConnection(connectionString string, logger Log) *sqlx.DB {
 
 	if logger == nil {
