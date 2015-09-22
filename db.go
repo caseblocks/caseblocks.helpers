@@ -1,6 +1,8 @@
 package helpers
 
 import (
+	"fmt"
+	"os"
 	"time"
 
 	"github.com/jmoiron/sqlx"
@@ -8,12 +10,37 @@ import (
 	"labix.org/v2/mgo/bson"
 )
 
+func FindDBConnString() string {
+	if os.Getenv("MYSQL_CONN") != "" {
+		return os.Getenv("MYSQL_CONN")
+	} else if os.Getenv("MYSQL_PORT_3306_TCP_ADDR") != "" && os.Getenv("MYSQL_PORT_3306_TCP_PORT") != "" {
+		return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
+			os.Getenv("MYSQL_USER"),
+			os.Getenv("MYSQL_PASSWORD"),
+			os.Getenv("MYSQL_PORT_3306_TCP_ADDR"),
+			os.Getenv("MYSQL_PORT_3306_TCP_PORT"),
+			os.Getenv("MYSQL_DATABASE"))
+	}
+	return ""
+}
+
+func FindRedisConnString() string {
+	if os.Getenv("REDIS_HOST") != "" {
+		return os.Getenv("REDIS_HOST")
+	} else if os.Getenv("REDIS_PORT_6379_TCP_ADDR") != "" && os.Getenv("REDIS_PORT_6379_TCP_PORT") != "" {
+		return fmt.Sprintf("%s:%s",
+			os.Getenv("REDIS_PORT_6379_TCP_ADDR"),
+			os.Getenv("REDIS_PORT_6379_TCP_PORT"))
+	}
+	return ""
+}
+
 func NewSqlConnection(connectionString string, logger Log) *sqlx.DB {
 
 	if logger == nil {
 		logger = NewConsoleLogger()
 	}
-
+	logger.Debug(connectionString)
 	db, err := sqlx.Connect("mysql", connectionString)
 	PanicToLogIf(err, logger)
 	return db

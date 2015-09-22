@@ -5,9 +5,9 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"github.com/garyburd/redigo/redis"
 	"time"
-	"os"
+
+	"github.com/garyburd/redigo/redis"
 )
 
 func jid() (string, error) {
@@ -30,20 +30,7 @@ type SidekiqJob struct {
 
 func LauchSidekiqJob(queue string, class string, params []map[string]interface{}) error {
 
-	// logger := cb.Logger()
-	// db := cb.NewSqlConnection(os.Getenv("MYSQL_CONN"), logger)
-
-	// bucket := cb.Bucket{}
-	// rows, err := db.Queryx("select id, name, case_type_id, kpi, last_checked_membership_at, last_checked_tripping_at from case_blocks_buckets;")
-	// for rows.Next() {
-	//  err := rows.StructScan(&bucket)
-	//  cb.PanicIf(err, logger)
-	//  logger.Printf("%#v\n", bucket)
-	// }
-
-	redis_host := os.Getenv("REDIS_HOST")
-
-	c, err := redis.Dial("tcp", fmt.Sprintf("%s:6379", redis_host))
+	c, err := redis.Dial("tcp", FindRedisConnString())
 	if err != nil {
 		return err
 	}
