@@ -10,6 +10,18 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+func FindUserInAccount(userId, accountId int, db *sqlx.DB) (User, error) {
+	var sql string
+	if db.DriverName() == "postgres" {
+		sql = "select id, account_id, is_account_admin from case_blocks_users where account_id=$1 and id=$2"
+	} else {
+		sql = "select id, account_id, is_account_admin from case_blocks_users where account_id=? and id=?"
+	}
+	user := User{}
+	getUserErr := db.Get(&user, sql, accountId, userId)
+	return user, getUserErr
+}
+
 func FindUserFromId(req *http.Request, res http.ResponseWriter, db *sqlx.DB) (User, error) {
 
 	var token string
