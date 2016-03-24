@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/garyburd/redigo/redis"
+	"github.com/emergeadapt/caseblocks.helpers/Godeps/_workspace/src/github.com/garyburd/redigo/redis"
 )
 
 func jid() (string, error) {

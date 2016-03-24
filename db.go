@@ -5,9 +5,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/jmoiron/sqlx"
-	"labix.org/v2/mgo"
-	"labix.org/v2/mgo/bson"
+	"github.com/emergeadapt/caseblocks.helpers/Godeps/_workspace/src/github.com/jmoiron/sqlx"
+	"github.com/emergeadapt/caseblocks.helpers/Godeps/_workspace/src/labix.org/v2/mgo"
+	"github.com/emergeadapt/caseblocks.helpers/Godeps/_workspace/src/labix.org/v2/mgo/bson"
 )
 
 func FindDBConnString() string {

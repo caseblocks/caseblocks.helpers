@@ -6,8 +6,8 @@ import (
 
 	"strings"
 
-	"github.com/go-martini/martini"
-	"github.com/jmoiron/sqlx"
+	"github.com/emergeadapt/caseblocks.helpers/Godeps/_workspace/src/github.com/go-martini/martini"
+	"github.com/emergeadapt/caseblocks.helpers/Godeps/_workspace/src/github.com/jmoiron/sqlx"
 )
 
 func FindUserInAccount(userId, accountId int, db *sqlx.DB) (User, error) {

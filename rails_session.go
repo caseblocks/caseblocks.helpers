@@ -13,7 +13,7 @@ import (
 	"strconv"
 	"strings"
 
-	"golang.org/x/crypto/pbkdf2"
+	"github.com/emergeadapt/caseblocks.helpers/Godeps/_workspace/src/golang.org/x/crypto/pbkdf2"
 )
 
 const (
