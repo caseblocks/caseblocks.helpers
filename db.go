@@ -8,7 +8,13 @@ import (
 	"github.com/jmoiron/sqlx"
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
+
+	uuid "github.com/satori/go.uuid"
 )
+
+func GUIDString() string {
+	return uuid.NewV4().String()
+}
 
 func FindDBConnString() string {
 	if os.Getenv("MYSQL_CONN") != "" {

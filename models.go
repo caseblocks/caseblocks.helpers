@@ -10,16 +10,26 @@ type TS struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 }
 
+type FKInt int
+
+type CaseTypeCode string
+
 type User struct {
-	Id             int
-	AccountId      int  `db:"account_id"`
-	IsAccountAdmin bool `db:"is_account_admin"`
+	Id             FKInt
+	AccountId      FKInt `db:"account_id"`
+	IsAccountAdmin bool  `db:"is_account_admin"`
 }
 
 type CaseType struct {
-	Id             int
+	Id             FKInt
+	AccountId      FKInt  `db:"account_id"`
 	Name           string `db:"name"`
 	SystemCategory string `db:"system_category"`
+	Schemas        []string
+}
+
+func (ct *CaseType) CurrentSchemaVersion() int {
+	return len(ct.Schemas)
 }
 
 type Permission struct {
@@ -28,14 +38,14 @@ type Permission struct {
 }
 
 type TeamMembership struct {
-	TeamId int `db:"team_id"`
-	UserId int `db:"user_id"`
+	TeamId FKInt `db:"team_id"`
+	UserId FKInt `db:"user_id"`
 }
 
 type Bucket struct {
-	Id                      int
+	Id                      FKInt
 	Name                    string `db:"name"`
-	CaseTypeId              int    `db:"case_type_id`
+	CaseTypeId              FKInt  `db:"case_type_id`
 	Kpi                     string
 	LastCheckedMembershipAt time.Time `db:"last_checked_membership_at"`
 	LastCheckedTrippingAt   time.Time `db:"last_checked_membership_at"`
