@@ -2,7 +2,6 @@ package helpers
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 
 	"crypto/aes"
@@ -81,12 +80,10 @@ func DecryptSignedCookie(signed_cookie, secret_key_base, salt string) (session [
 }
 
 func getAuthUserId(decrypted_session_data []byte) (user_id int64, err error) {
-	fmt.Printf("Decrypted-Session: %s\n", string(decrypted_session_data))
 	userKeyRegex := regexp.MustCompile(`warden.user.user.key":\[\[(\d+)`)
 	matches := userKeyRegex.FindStringSubmatch(string(decrypted_session_data))
 	userIdInt, err := strconv.Atoi(matches[1])
 	user_id = int64(userIdInt)
-	fmt.Printf("UserID: %d\n", user_id)
 	return user_id, err
 }
 
