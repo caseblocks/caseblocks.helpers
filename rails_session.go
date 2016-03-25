@@ -10,6 +10,7 @@ import (
 	"crypto/sha1"
 	"encoding/base64"
 	"net/url"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -18,11 +19,10 @@ import (
 )
 
 const (
-	secret_key_base = "216daf722168dedd9ad0c0666e665e74cd08e55774237672b45c17b7f475efde5acdd19f769912cadeb14deae5e40dce8a037fbbbd76dc8d685d58f2cc75f97b" // can be found in config/initializers/secret_token.rb
-	salt            = "encrypted cookie"                                                                                                                 // default value for Rails 4 app
-	key_iter_num    = 1000
-	key_size        = 64
-	dummy           = 1
+	salt         = "encrypted cookie" // default value for Rails 4 app
+	key_iter_num = 1000
+	key_size     = 64
+	dummy        = 1
 )
 
 func generateSecret(base, salt string) []byte {
@@ -96,6 +96,11 @@ func findUserIdInRequest(req *http.Request) (int64, error) {
 	cookie, err := req.Cookie("_caseblocks_session")
 	if err != nil {
 		return 0, errors.New("User cookie not found")
+	}
+
+	secret_key_base := os.Getenv("SECRET_KEY_BASE")
+	if len(secret_key_base) == 0 {
+		return 0, errors.New("Please specify SECRET_KEY_BASE envvar to share Rails sessions.")
 	}
 
 	decrypted_session_data, err := DecryptSignedCookie(cookie.Value, secret_key_base, salt)
