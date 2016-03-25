@@ -21,6 +21,7 @@ const (
 	salt            = "encrypted cookie"                                                                                                                 // default value for Rails 4 app
 	key_iter_num    = 1000
 	key_size        = 64
+	dummy           = 1
 )
 
 func generateSecret(base, salt string) []byte {
