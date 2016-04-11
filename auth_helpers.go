@@ -41,9 +41,9 @@ func FindUserFromId(req *http.Request, res http.ResponseWriter, db *sqlx.DB) (Us
 
 		var sql string
 		if db.DriverName() == "postgres" {
-			sql = "select id, account_id, is_account_admin from case_blocks_users where authentication_token=$1"
+			sql = "select u.id, u.account_id, u.is_account_admin, a.nickname from case_blocks_users u, case_blocks_accounts a where u.account_id=a.id and u.authentication_token=$1"
 		} else {
-			sql = "select id, account_id, is_account_admin from case_blocks_users where authentication_token=?"
+			sql = "select u.id, u.account_id, u.is_account_admin, a.nickname from case_blocks_users u, case_blocks_accounts a where u.account_id=a.id and u.authentication_token=?"
 		}
 		getUserErr := db.Get(&user, sql, token)
 		if getUserErr != nil {
@@ -59,9 +59,9 @@ func FindUserFromId(req *http.Request, res http.ResponseWriter, db *sqlx.DB) (Us
 		}
 		var sql string
 		if db.DriverName() == "postgres" {
-			sql = "select id, account_id, is_account_admin from case_blocks_users where id=$1"
+			sql = "select u.id, u.account_id, u.is_account_admin, a.nickname from case_blocks_users u, case_blocks_accounts a where u.account_id=a.id and u.id=$1"
 		} else {
-			sql = "select id, account_id, is_account_admin from case_blocks_users where id=?"
+			sql = "select u.id, u.account_id, u.is_account_admin, a.nickname from case_blocks_users u, case_blocks_accounts a where u.account_id=a.id and u.id=?"
 		}
 		getUserErr := db.Get(&user, sql, userId)
 		if getUserErr != nil {

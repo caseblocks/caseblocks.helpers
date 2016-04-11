@@ -12,8 +12,9 @@ type TS struct {
 
 type User struct {
 	Id             int
-	AccountId      int  `db:"account_id"`
-	IsAccountAdmin bool `db:"is_account_admin"`
+	AccountId      int    `db:"account_id"`
+	IsAccountAdmin bool   `db:"is_account_admin"`
+	AccountCode    string `db:"nickname"`
 }
 
 type CaseType struct {
