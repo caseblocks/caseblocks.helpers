@@ -32,7 +32,7 @@ func FindRedisConnString() string {
 			os.Getenv("REDIS_PORT_6379_TCP_ADDR"),
 			os.Getenv("REDIS_PORT_6379_TCP_PORT"))
 	}
-	return ""
+	return "localhost:6379"
 }
 
 func FindMongoConnString() string {
