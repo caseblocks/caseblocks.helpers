@@ -16,8 +16,9 @@ type CaseTypeCode string
 
 type User struct {
 	Id             FKInt
-	AccountId      FKInt `db:"account_id"`
-	IsAccountAdmin bool  `db:"is_account_admin"`
+	AccountId      FKInt  `db:"account_id"`
+	IsAccountAdmin bool   `db:"is_account_admin"`
+	AccountCode    string `db:"nickname"`
 }
 
 type CaseType struct {

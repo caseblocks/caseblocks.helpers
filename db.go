@@ -5,11 +5,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/jmoiron/sqlx"
-	"labix.org/v2/mgo"
-	"labix.org/v2/mgo/bson"
-
-	uuid "github.com/satori/go.uuid"
+	"github.com/emergeadapt/caseblocks.helpers/Godeps/_workspace/src/github.com/jmoiron/sqlx"
+	uuid "github.com/emergeadapt/caseblocks.helpers/Godeps/_workspace/src/github.com/satori/go.uuid"
+	"github.com/emergeadapt/caseblocks.helpers/Godeps/_workspace/src/labix.org/v2/mgo"
+	"github.com/emergeadapt/caseblocks.helpers/Godeps/_workspace/src/labix.org/v2/mgo/bson"
 )
 
 func GUIDString() string {
@@ -38,7 +37,7 @@ func FindRedisConnString() string {
 			os.Getenv("REDIS_PORT_6379_TCP_ADDR"),
 			os.Getenv("REDIS_PORT_6379_TCP_PORT"))
 	}
-	return ""
+	return "localhost:6379"
 }
 
 func FindMongoConnString() string {
