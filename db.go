@@ -29,6 +29,20 @@ func FindDBConnString() string {
 	return ""
 }
 
+func FindUserDBConnString() string {
+	if os.Getenv("USER_MYSQL_CONN") != "" {
+		return os.Getenv("USER_MYSQL_CONN")
+	} else if os.Getenv("USER_MYSQL_PORT_3306_TCP_ADDR") != "" && os.Getenv("USER_MYSQL_PORT_3306_TCP_PORT") != "" {
+		return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
+			os.Getenv("USER_MYSQL_USER"),
+			os.Getenv("USER_MYSQL_PASSWORD"),
+			os.Getenv("USER_MYSQL_PORT_3306_TCP_ADDR"),
+			os.Getenv("USER_MYSQL_PORT_3306_TCP_PORT"),
+			os.Getenv("USER_MYSQL_DATABASE"))
+	}
+	return FindDBConnString()
+}
+
 func FindRedisConnString() string {
 	if os.Getenv("REDIS_HOST") != "" {
 		return os.Getenv("REDIS_HOST")
