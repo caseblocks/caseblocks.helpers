@@ -36,16 +36,11 @@ func FindUserFromId(req *http.Request, res http.ResponseWriter, db *sqlx.DB) (Us
 			token = formVals[0]
 		}
 	}
-	user := User{}
+	var user User
+	var getUserErr error
 	if token != "" {
 
-		var sql string
-		if db.DriverName() == "postgres" {
-			sql = "select u.id, u.account_id, u.is_account_admin, a.nickname from case_blocks_users u, case_blocks_accounts a where u.account_id=a.id and u.authentication_token=$1"
-		} else {
-			sql = "select u.id, u.account_id, u.is_account_admin, a.nickname from case_blocks_users u, case_blocks_accounts a where u.account_id=a.id and u.authentication_token=?"
-		}
-		getUserErr := db.Get(&user, sql, token)
+		user, getUserErr = NewUserRepository(db).FindByAuthToken(token)
 		if getUserErr != nil {
 			http.Error(res, "Not Authorized", http.StatusUnauthorized)
 			return user, getUserErr
@@ -57,16 +52,10 @@ func FindUserFromId(req *http.Request, res http.ResponseWriter, db *sqlx.DB) (Us
 			http.Error(res, "Not Authorized", http.StatusUnauthorized)
 			return user, err
 		}
-		var sql string
-		if db.DriverName() == "postgres" {
-			sql = "select u.id, u.account_id, u.is_account_admin, a.nickname from case_blocks_users u, case_blocks_accounts a where u.account_id=a.id and u.id=$1"
-		} else {
-			sql = "select u.id, u.account_id, u.is_account_admin, a.nickname from case_blocks_users u, case_blocks_accounts a where u.account_id=a.id and u.id=?"
-		}
-		getUserErr := db.Get(&user, sql, userId)
+
+		user, getUserErr = NewUserRepository(db).FindByAuthToken(token)
 		if getUserErr != nil {
-			fmt.Printf("User not found: %d", userId)
-			fmt.Println(getUserErr)
+			fmt.Printf("User not found: %d - %s\n", userId, getUserErr.Error())
 			http.Error(res, "Not Authorized", http.StatusUnauthorized)
 			return user, err
 		}
