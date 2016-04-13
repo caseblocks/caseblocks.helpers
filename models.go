@@ -3,11 +3,13 @@ package helpers
 import (
 	"math"
 	"time"
+
+	"github.com/emergeadapt/caseblocks.helpers/Godeps/_workspace/src/labix.org/v2/mgo/bson"
 )
 
 type TS struct {
-	CreatedAt *time.Time `json:"created_at"`
-	UpdatedAt *time.Time `json:"updated_at"`
+	CreatedAt *time.Time `bson:"created_at" json:"created_at"`
+	UpdatedAt *time.Time `bson:"updated_at" json:"updated_at"`
 }
 
 type FKInt int
@@ -19,6 +21,44 @@ type User struct {
 	AccountId      FKInt  `db:"account_id"`
 	IsAccountAdmin bool   `db:"is_account_admin"`
 	AccountCode    string `db:"nickname"`
+	Email          string
+	DisplayName    string `db:"display_name"`
+	Login          string
+}
+
+type Recipient struct {
+	Id          FKInt
+	Type        string
+	DisplayName string `bson:"display_name"`
+	Email       string
+}
+
+type Message struct {
+	Id                bson.ObjectId `bson:"_id"`
+	Body              string
+	AuthorId          FKInt       `bson:"author_id"`
+	AuthorDisplayName string      `bson:"author_display_name"`
+	RecipientUsers    []Recipient `bson:"recipient_users"`
+	RecipientTeams    []Recipient `bson:"recipient_teams"`
+	Subject           string
+	CreatedAt         time.Time `bson:"created_at" json:"created_at"`
+	UpdatedAt         time.Time `bson:"updated_at" json:"updated_at"`
+}
+
+type CaseDocument struct {
+	Id            bson.ObjectId `bson:"_id"`
+	Title         string
+	Conversations []Conversation
+	CreatedAt     time.Time `bson:"created_at" json:"created_at"`
+	UpdatedAt     time.Time `bson:"updated_at" json:"updated_at"`
+}
+
+type Conversation struct {
+	Id        bson.ObjectId `bson:"_id"`
+	Subject   string
+	Messages  []Message
+	CreatedAt time.Time `bson:"created_at" json:"created_at"`
+	UpdatedAt time.Time `bson:"updated_at" json:"updated_at"`
 }
 
 type CaseType struct {
