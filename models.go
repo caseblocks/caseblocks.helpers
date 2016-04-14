@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"fmt"
 	"math"
 	"time"
 
@@ -24,6 +25,22 @@ type User struct {
 	Email          string
 	DisplayName    string `db:"display_name"`
 	Login          string
+	CreatedAt      time.Time `bson:"created_at" json:"created_at" db:"created_at"`
+	UpdatedAt      time.Time `bson:"updated_at" json:"updated_at" db:"updated_at"`
+}
+
+func (u User) String() string {
+	return fmt.Sprintf("%4d|%s|%s|%s", u.Id, u.AccountCode, u.Email, u.Login)
+}
+
+type Account struct {
+	Id                      FKInt
+	Title                   string
+	Nickname                string
+	HomepageImageUrl        string    `bson:"homepage_image_url" json:"homepage_image_url" db:"homepage_image_url"`
+	DefaultFromEmailAddress string    `bson:"default_email_from_address" json:"default_email_from_address" db:"default_email_from_address"`
+	CreatedAt               time.Time `bson:"created_at" json:"created_at" db:"created_at"`
+	UpdatedAt               time.Time `bson:"updated_at" json:"updated_at" db:"updated_at"`
 }
 
 type Recipient struct {
@@ -38,8 +55,7 @@ type Message struct {
 	Body              string
 	AuthorId          FKInt       `bson:"author_id"`
 	AuthorDisplayName string      `bson:"author_display_name"`
-	RecipientUsers    []Recipient `bson:"recipient_users"`
-	RecipientTeams    []Recipient `bson:"recipient_teams"`
+	Recipients        []Recipient `bson:"recipients"`
 	Subject           string
 	CreatedAt         time.Time `bson:"created_at" json:"created_at"`
 	UpdatedAt         time.Time `bson:"updated_at" json:"updated_at"`
@@ -47,6 +63,8 @@ type Message struct {
 
 type CaseDocument struct {
 	Id            bson.ObjectId `bson:"_id"`
+	AccountId     FKInt         `bson:"account_id" json:"account_id"`
+	AccountCode   string
 	Title         string
 	Conversations []Conversation
 	CreatedAt     time.Time `bson:"created_at" json:"created_at"`
