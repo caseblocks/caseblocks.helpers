@@ -1,8 +1,10 @@
 package helpers
 
 import (
+	"encoding/json"
 	"fmt"
 	"math"
+	"strconv"
 	"time"
 
 	"github.com/emergeadapt/caseblocks.helpers/Godeps/_workspace/src/labix.org/v2/mgo/bson"
@@ -50,6 +52,23 @@ type Recipient struct {
 	Email       string
 }
 
+func (r *Recipient) UnmarshalJSON(data []byte) error {
+	var aux struct {
+		Id          string
+		Type        string
+		DisplayName string
+		Email       string
+	}
+	fmt.Println("UNMARSHALLING RECIPIENT", string(data))
+	err := json.Unmarshal(data, aux)
+	id, err := strconv.Atoi(aux.Id)
+	r.Id = FKInt(id)
+	r.Type = aux.Type
+	r.DisplayName = aux.DisplayName
+	r.Email = r.Email
+	return err
+}
+
 type Message struct {
 	Id                bson.ObjectId `bson:"_id"`
 	Body              string
@@ -59,6 +78,31 @@ type Message struct {
 	Subject           string
 	CreatedAt         time.Time `bson:"created_at" json:"created_at"`
 	UpdatedAt         time.Time `bson:"updated_at" json:"updated_at"`
+}
+
+func (m *Message) UnmarshalJSON(data []byte) error {
+	var aux struct {
+		Id                string
+		Body              string
+		AuthorId          string `json:"author_id"`
+		AuthorDisplayName string `json:"author_display_name"`
+		Recipients        []Recipient
+		Subject           string
+		CreatedAt         time.Time `json:"created_at"`
+		UpdatedAt         time.Time `json:"updated_at"`
+	}
+	fmt.Println("UNMARSHALLING MESSAGE", string(data))
+	err := json.Unmarshal(data, aux)
+	m.Id = bson.ObjectIdHex(aux.Id)
+	m.Body = aux.Body
+	author_id, err := strconv.Atoi(aux.AuthorId)
+	m.AuthorId = FKInt(author_id)
+	m.AuthorDisplayName = aux.AuthorDisplayName
+	m.Recipients = aux.Recipients
+	m.Subject = aux.Subject
+	m.CreatedAt = aux.CreatedAt
+	m.UpdatedAt = aux.UpdatedAt
+	return err
 }
 
 type CaseDocument struct {
