@@ -7,7 +7,7 @@ import (
 	// "strings"
 
 	// "github.com/go-martini/martini"
-	"github.com/emergeadapt/caseblocks.helpers/Godeps/_workspace/src/github.com/jmoiron/sqlx"
+	"github.com/jmoiron/sqlx"
 )
 
 // LifecycleFunction is a model to describe a javascript exectued function
