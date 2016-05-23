@@ -5,14 +5,28 @@ import (
 	"os"
 	"time"
 
-	"github.com/emergeadapt/caseblocks.helpers/Godeps/_workspace/src/github.com/jmoiron/sqlx"
-	uuid "github.com/emergeadapt/caseblocks.helpers/Godeps/_workspace/src/github.com/satori/go.uuid"
-	"github.com/emergeadapt/caseblocks.helpers/Godeps/_workspace/src/labix.org/v2/mgo"
-	"github.com/emergeadapt/caseblocks.helpers/Godeps/_workspace/src/labix.org/v2/mgo/bson"
+	"github.com/jmoiron/sqlx"
+	uuid "github.com/satori/go.uuid"
+	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 func GUIDString() string {
 	return uuid.NewV4().String()
+}
+
+func FindCBAPIEndpoint() string {
+	if os.Getenv("CB_API_ENDPOINT") != "" {
+		return os.Getenv("CB_API_ENDPOINT")
+	}
+	return "http://localhost:8888"
+}
+
+func FindTPrintAPIEndpoint() string {
+	if os.Getenv("TPRINT_API_ENDPOINT") != "" {
+		return os.Getenv("TPRINT_API_ENDPOINT")
+	}
+	return "http://localhost:8888"
 }
 
 func FindDBConnString() string {
@@ -63,6 +77,13 @@ func FindMongoConnString() string {
 			os.Getenv("MONGODB_PORT_27017_TCP_PORT"))
 	}
 	return ""
+}
+
+func FindMongoDbString() string {
+	if os.Getenv("MONGODB_DB") != "" {
+		return os.Getenv("MONGODB_DB")
+	}
+	return "caseblocks-development"
 }
 
 func NewSqlConnection(connectionString string, logger Log) *sqlx.DB {
