@@ -1,7 +1,7 @@
 package helpers
 
 import (
-	"github.com/emergeadapt/caseblocks.helpers/Godeps/_workspace/src/github.com/jmoiron/sqlx"
+	"github.com/jmoiron/sqlx"
 )
 
 type AccountRepository interface {
