@@ -1,8 +1,8 @@
 package helpers
 
 import (
-	"github.com/emergeadapt/caseblocks.helpers/Godeps/_workspace/src/github.com/jmoiron/sqlx"
 	"github.com/gin-gonic/gin"
+	"github.com/jmoiron/sqlx"
 )
 
 func DatabaseSession() gin.HandlerFunc {
