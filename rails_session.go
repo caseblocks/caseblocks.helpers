@@ -14,7 +14,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/emergeadapt/caseblocks.helpers/Godeps/_workspace/src/golang.org/x/crypto/pbkdf2"
+	"golang.org/x/crypto/pbkdf2"
 )
 
 const (
@@ -81,7 +81,8 @@ func DecryptSignedCookie(signed_cookie, secret_key_base, salt string) (session [
 
 func getAuthUserId(decrypted_session_data []byte) (user_id int64, err error) {
 	userKeyRegex := regexp.MustCompile(`warden.user.user.key":\[\[(\d+)`)
-	matches := userKeyRegex.FindStringSubmatch(string(decrypted_session_data))
+	session_data := string(decrypted_session_data)
+	matches := userKeyRegex.FindStringSubmatch(session_data)
 	userIdInt, err := strconv.Atoi(matches[1])
 	user_id = int64(userIdInt)
 	return user_id, err
