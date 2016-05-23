@@ -6,8 +6,8 @@ import (
 
 	"strings"
 
-	"github.com/emergeadapt/caseblocks.helpers/Godeps/_workspace/src/github.com/go-martini/martini"
-	"github.com/emergeadapt/caseblocks.helpers/Godeps/_workspace/src/github.com/jmoiron/sqlx"
+	"github.com/go-martini/martini"
+	"github.com/jmoiron/sqlx"
 )
 
 func FindUserInAccount(userId, accountId int, db *sqlx.DB) (User, error) {
@@ -53,7 +53,7 @@ func FindUserFromId(req *http.Request, res http.ResponseWriter, db *sqlx.DB) (Us
 			return user, err
 		}
 
-		user, getUserErr = NewUserRepository(db).FindByAuthToken(token)
+		user, getUserErr = NewUserRepository(db).FindById(FKInt(userId))
 		if getUserErr != nil {
 			fmt.Printf("User not found: %d - %s\n", userId, getUserErr.Error())
 			http.Error(res, "Not Authorized", http.StatusUnauthorized)
