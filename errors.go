@@ -3,7 +3,7 @@ package helpers
 import (
 	"fmt"
 
-	"github.com/emergeadapt/caseblocks.helpers/Godeps/_workspace/src/github.com/martini-contrib/render"
+	"github.com/martini-contrib/render"
 )
 
 func PanicToLogIf(err error, logger Log) {
