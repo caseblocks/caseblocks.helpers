@@ -1,13 +1,14 @@
 package helpers
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"math"
 	"strconv"
 	"time"
 
-	"github.com/emergeadapt/caseblocks.helpers/Godeps/_workspace/src/labix.org/v2/mgo/bson"
+	"gopkg.in/mgo.v2/bson"
 )
 
 type TS struct {
@@ -27,6 +28,7 @@ type User struct {
 	Email          string
 	DisplayName    string `db:"display_name"`
 	Login          string
+	AuthToken      string    `json:"-" db:"authentication_token"`
 	CreatedAt      time.Time `bson:"created_at" json:"created_at" db:"created_at"`
 	UpdatedAt      time.Time `bson:"updated_at" json:"updated_at" db:"updated_at"`
 }
@@ -35,79 +37,114 @@ func (u User) String() string {
 	return fmt.Sprintf("%4d|%s|%s|%s", u.Id, u.AccountCode, u.Email, u.Login)
 }
 
+type Team struct {
+	Id                      FKInt     `db:"id" json:"id"`
+	AccountId               FKInt     `db:"account_id" json:"account_id"`
+	AccountCode             string    `db:"nickname" json:"account_code"`
+	DisplayName             string    `db:"display_name" json:"display_name"`
+	CreatedAt               time.Time `bson:"created_at" json:"created_at" db:"created_at"`
+	UpdatedAt               time.Time `bson:"updated_at" json:"updated_at" db:"updated_at"`
+	ExcludeFromDistribution bool      `db:"exclude_from_distribution" json:"exclude_from_distribution"`
+	IncludeInDistribution   bool      `db:"include_in_distribution"`
+	TeamScreenEnabled       bool      `db:"team_screen_enabled"`
+}
+
 type Account struct {
 	Id                      FKInt
 	Title                   string
 	Nickname                string
-	HomepageImageUrl        string    `bson:"homepage_image_url" json:"homepage_image_url" db:"homepage_image_url"`
-	DefaultFromEmailAddress string    `bson:"default_email_from_address" json:"default_email_from_address" db:"default_email_from_address"`
-	CreatedAt               time.Time `bson:"created_at" json:"created_at" db:"created_at"`
-	UpdatedAt               time.Time `bson:"updated_at" json:"updated_at" db:"updated_at"`
+	HomepageImageUrl        sql.NullString `bson:"homepage_image_url" json:"homepage_image_url" db:"homepage_image_url"`
+	DefaultFromEmailAddress string         `bson:"default_email_from_address" json:"default_email_from_address" db:"default_email_from_address"`
+	CreatedAt               time.Time      `bson:"created_at" json:"created_at" db:"created_at"`
+	UpdatedAt               time.Time      `bson:"updated_at" json:"updated_at" db:"updated_at"`
+	CipherKey               string         `json:"-" db:"cipher_key"`
 }
 
 type Recipient struct {
-	Id          FKInt
-	Type        string
-	DisplayName string `bson:"display_name"`
-	Email       string
+	Id          FKInt  `json:"id"`
+	Type        string `json:"type"`
+	DisplayName string `bson:"display_name" json:"display_name"`
+	Email       string `json:"email"`
 }
 
 func (r *Recipient) UnmarshalJSON(data []byte) error {
 	var aux struct {
-		Id          string
-		Type        string
-		DisplayName string
-		Email       string
+		Id          interface{} `json:"id"`
+		Type        string      `json:"type"`
+		DisplayName string      `json:"name"`
+		Email       string      `json:"email"`
 	}
-	fmt.Println("UNMARSHALLING RECIPIENT", string(data))
-	err := json.Unmarshal(data, aux)
-	id, err := strconv.Atoi(aux.Id)
-	r.Id = FKInt(id)
+	err := json.Unmarshal(data, &aux)
+	switch v := aux.Id.(type) {
+	case string:
+		if id, err := strconv.Atoi(v); err != nil {
+			return err
+		} else {
+			r.Id = FKInt(id)
+		}
+	case float64:
+		r.Id = FKInt(v)
+	case int64:
+		r.Id = FKInt(v)
+	default:
+		return fmt.Errorf("Unable to unmarshal recipient id.")
+	}
 	r.Type = aux.Type
 	r.DisplayName = aux.DisplayName
-	r.Email = r.Email
+	r.Email = aux.Email
 	return err
 }
 
 type Message struct {
-	Id                bson.ObjectId `bson:"_id"`
-	Body              string
-	AuthorId          FKInt       `bson:"author_id"`
-	AuthorDisplayName string      `bson:"author_display_name"`
-	Recipients        []Recipient `bson:"recipients"`
-	Subject           string
-	CreatedAt         time.Time `bson:"created_at" json:"created_at"`
-	UpdatedAt         time.Time `bson:"updated_at" json:"updated_at"`
+	Id                bson.ObjectId `bson:"_id" json:"_id"`
+	Body              string        `json:"body"`
+	CaseId            bson.ObjectId `bson:"case_id" json:"case_id"`
+	ConversationId    bson.ObjectId `bson:"conversation_id" json:"conversation_id"`
+	AuthorId          FKInt         `bson:"author_id" json:"author_id"`
+	AuthorDisplayName string        `bson:"author_display_name" json:"author_display_name"`
+	Recipients        []Recipient   `bson:"recipients" json:"recipients"`
+	Subject           string        `json:"subject"`
+	Attachments       []string      `json:"attachments"`
+	CreatedAt         time.Time     `bson:"created_at" json:"created_at"`
+	UpdatedAt         time.Time     `bson:"updated_at" json:"updated_at"`
 }
 
 func (m *Message) UnmarshalJSON(data []byte) error {
 	var aux struct {
 		Id                string
-		Body              string
-		AuthorId          string `json:"author_id"`
-		AuthorDisplayName string `json:"author_display_name"`
-		Recipients        []Recipient
-		Subject           string
-		CreatedAt         time.Time `json:"created_at"`
-		UpdatedAt         time.Time `json:"updated_at"`
+		Body              string        `json:"body"`
+		CaseId            bson.ObjectId `json:"case_id"`
+		ConversationId    bson.ObjectId `json:"conversation_id"`
+		AuthorId          string        `json:"author_id"`
+		AuthorDisplayName string        `json:"author_display_name"`
+		Recipients        []Recipient   `json:"recipients"`
+		Subject           string        `json:"subject"`
+		Attachments       []string      `json:"attachments"`
+		CreatedAt         time.Time     `json:"created_at"`
+		UpdatedAt         time.Time     `json:"updated_at"`
 	}
-	fmt.Println("UNMARSHALLING MESSAGE", string(data))
-	err := json.Unmarshal(data, aux)
-	m.Id = bson.ObjectIdHex(aux.Id)
+	err := json.Unmarshal(data, &aux)
+	if len(aux.Id) > 0 {
+		m.Id = bson.ObjectIdHex(aux.Id)
+	}
 	m.Body = aux.Body
 	author_id, err := strconv.Atoi(aux.AuthorId)
+	m.CaseId = aux.CaseId
+	m.ConversationId = aux.ConversationId
 	m.AuthorId = FKInt(author_id)
 	m.AuthorDisplayName = aux.AuthorDisplayName
 	m.Recipients = aux.Recipients
 	m.Subject = aux.Subject
 	m.CreatedAt = aux.CreatedAt
 	m.UpdatedAt = aux.UpdatedAt
+	m.Attachments = aux.Attachments
 	return err
 }
 
 type CaseDocument struct {
 	Id            bson.ObjectId `bson:"_id"`
 	AccountId     FKInt         `bson:"account_id" json:"account_id"`
+	CaseTypeId    FKInt         `bson:"case_type_id" json:"case_type_id"`
 	AccountCode   string
 	Title         string
 	Conversations []Conversation
@@ -116,11 +153,11 @@ type CaseDocument struct {
 }
 
 type Conversation struct {
-	Id        bson.ObjectId `bson:"_id"`
-	Subject   string
-	Messages  []Message
-	CreatedAt time.Time `bson:"created_at" json:"created_at"`
-	UpdatedAt time.Time `bson:"updated_at" json:"updated_at"`
+	Id        bson.ObjectId `bson:"_id" json:"_id"`
+	Subject   string        `json:"subject" db:"subject"`
+	Messages  []Message     `json:"messages"`
+	CreatedAt time.Time     `bson:"created_at" json:"created_at"  db:"created_at"`
+	UpdatedAt time.Time     `bson:"updated_at" json:"updated_at"  db:"updated_at`
 }
 
 type CaseType struct {
@@ -129,6 +166,21 @@ type CaseType struct {
 	Name           string `db:"name"`
 	SystemCategory string `db:"system_category"`
 	Schemas        []string
+}
+
+func (ct CaseType) UriForCaseId(caseId string) string {
+
+	var systemCategory string
+	switch ct.SystemCategory {
+	case "P":
+		systemCategory = "people_types"
+	case "O":
+		systemCategory = "organization_types"
+	default:
+		systemCategory = "case_types"
+	}
+
+	return fmt.Sprintf("/#/%s/%d/case/%s/detail", systemCategory, ct.Id, caseId)
 }
 
 func (ct *CaseType) CurrentSchemaVersion() int {
