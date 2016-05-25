@@ -29,6 +29,13 @@ func FindTPrintAPIEndpoint() string {
 	return "http://localhost:8888"
 }
 
+func FindCryptAPIEndpoint() string {
+	if os.Getenv("CRYPT_API_ENDPOINT") != "" {
+		return os.Getenv("CRYPT_API_ENDPOINT")
+	}
+	return "http://localhost:7001"
+}
+
 func FindDBConnString() string {
 	if os.Getenv("MYSQL_CONN") != "" {
 		return os.Getenv("MYSQL_CONN")
