@@ -75,6 +75,9 @@ func (r *Recipient) UnmarshalJSON(data []byte) error {
 		Email       string      `json:"email"`
 	}
 	err := json.Unmarshal(data, &aux)
+	if err != nil {
+		return err
+	}
 	switch v := aux.Id.(type) {
 	case string:
 		if id, err := strconv.Atoi(v); err != nil {
@@ -86,8 +89,6 @@ func (r *Recipient) UnmarshalJSON(data []byte) error {
 		r.Id = FKInt(v)
 	case int64:
 		r.Id = FKInt(v)
-	default:
-		return fmt.Errorf("Unable to unmarshal recipient id.")
 	}
 	r.Type = aux.Type
 	r.DisplayName = aux.DisplayName
