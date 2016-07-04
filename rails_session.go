@@ -92,20 +92,24 @@ func findUserIdInRequest(req *http.Request) (int64, error) {
 	var user_id int64
 	found := false
 	cookie, err := req.Cookie("_caseblocks_session")
+	Dump("user cookie", cookie)
 	if err != nil {
 		return 0, errors.New("User cookie not found")
 	}
 
 	secret_key_base := os.Getenv("SECRET_KEY_BASE")
+	Dump("SECRET_KEY_BASE", secret_key_base)
 	if len(secret_key_base) == 0 {
 		return 0, errors.New("Please specify SECRET_KEY_BASE envvar to share Rails sessions.")
 	}
 
 	decrypted_session_data, err := DecryptSignedCookie(cookie.Value, secret_key_base, salt)
+	Dump("decrypted_session_data222", string(decrypted_session_data))
 	if err != nil {
 		return 0, errors.New("Unable to decrypt session data.")
 	}
 	user_id, err = getAuthUserId(decrypted_session_data)
+	Dump("user_id", user_id)
 	if err != nil {
 		return 0, errors.New("Unable to unmarshall data.")
 	}

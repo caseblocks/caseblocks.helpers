@@ -156,6 +156,7 @@ type CaseDocument struct {
 type Conversation struct {
 	Id        bson.ObjectId `bson:"_id" json:"_id"`
 	Subject   string        `json:"subject" db:"subject"`
+	CaseId    bson.ObjectId `bson:"case_id" json:"case_id"`
 	Messages  []Message     `json:"messages"`
 	CreatedAt time.Time     `bson:"created_at" json:"created_at"  db:"created_at"`
 	UpdatedAt time.Time     `bson:"updated_at" json:"updated_at"  db:"updated_at`

@@ -86,6 +86,21 @@ func FindMongoConnString() string {
 	return ""
 }
 
+func FindElasticSearchURL() string {
+	fmt.Println("1")
+	if os.Getenv("ELASTICSEARCH_URL") != "" {
+		fmt.Println("2")
+		return os.Getenv("ELASTICSEARCH_URL")
+	} else if os.Getenv("ELASTICSEARCH_PORT_9200_TCP_ADDR") != "" && os.Getenv("ELASTICSEARCH_PORT_9200_TCP_PORT") != "" {
+		fmt.Println("3")
+		return fmt.Sprintf("http://%s:%s",
+			os.Getenv("ELASTICSEARCH_PORT_9200_TCP_ADDR"),
+			os.Getenv("ELASTICSEARCH_PORT_9200_TCP_PORT"))
+	}
+	fmt.Println("4")
+	return "http://localhost:9200"
+}
+
 func FindMongoDbString() string {
 	if os.Getenv("MONGODB_DB") != "" {
 		return os.Getenv("MONGODB_DB")
