@@ -191,12 +191,12 @@ func DBUpdate(db *sqlx.DB, sql string, params ...interface{}) error {
 	}
 }
 
-func DBInsert(db *sqlx.DB, sql string, params ...interface{}) (cb.FKInt, error) {
+func DBInsert(db *sqlx.DB, sql string, params ...interface{}) (FKInt, error) {
 	if result, err := db.Exec(sql, params...); err != nil {
 		return 0, err
 	} else if lastId, err := result.LastInsertId(); err != nil {
 		return 0, err
 	} else {
-		return cb.FKInt(lastId), nil
+		return FKInt(lastId), nil
 	}
 }
