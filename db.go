@@ -87,17 +87,13 @@ func FindMongoConnString() string {
 }
 
 func FindElasticSearchURL() string {
-	fmt.Println("1")
 	if os.Getenv("ELASTICSEARCH_URL") != "" {
-		fmt.Println("2")
 		return os.Getenv("ELASTICSEARCH_URL")
 	} else if os.Getenv("ELASTICSEARCH_PORT_9200_TCP_ADDR") != "" && os.Getenv("ELASTICSEARCH_PORT_9200_TCP_PORT") != "" {
-		fmt.Println("3")
 		return fmt.Sprintf("http://%s:%s",
 			os.Getenv("ELASTICSEARCH_PORT_9200_TCP_ADDR"),
 			os.Getenv("ELASTICSEARCH_PORT_9200_TCP_PORT"))
 	}
-	fmt.Println("4")
 	return "http://localhost:9200"
 }
 
@@ -181,4 +177,26 @@ func BSONSafeArray(params IArray) IArray {
 
 func BSONSafe(param interface{}) interface{} {
 	return BSONSafeElem(param)
+}
+
+func DBUpdate(db *sqlx.DB, sql string, params ...interface{}) error {
+	if result, err := db.Exec(sql, params...); err != nil {
+		return err
+	} else if rowsAffected, err := result.RowsAffected(); err != nil {
+		return err
+	} else if rowsAffected == 0 {
+		return fmt.Errorf("Unable to update Saved Search. Record doesn't exist.")
+	} else {
+		return nil
+	}
+}
+
+func DBInsert(db *sqlx.DB, sql string, params ...interface{}) (FKInt, error) {
+	if result, err := db.Exec(sql, params...); err != nil {
+		return 0, err
+	} else if lastId, err := result.LastInsertId(); err != nil {
+		return 0, err
+	} else {
+		return FKInt(lastId), nil
+	}
 }
