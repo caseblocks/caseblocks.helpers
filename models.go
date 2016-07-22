@@ -16,6 +16,10 @@ type TS struct {
 	UpdatedAt *time.Time `bson:"updated_at" json:"updated_at"`
 }
 
+type Context struct {
+  CurrentUser   User
+}
+
 type FKInt int
 
 type CaseTypeCode string
