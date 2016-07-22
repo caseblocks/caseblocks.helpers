@@ -21,9 +21,10 @@ func (r *relationalAccountRepository) FindById(id FKInt) (Account, error) {
 
 	var sql string
 	if r.DB.DriverName() == "postgres" {
-		sql = "select * from case_blocks_accounts where id=$1"
+
+		sql = "select id, title, nickname, created_at, updated_at, default_email_from_address, homepage_image_url, cipher_key from case_blocks_accounts where id=$1"
 	} else {
-		sql = "select * from case_blocks_accounts where id=?"
+		sql = "select id, title, nickname, created_at, updated_at, default_email_from_address, homepage_image_url, cipher_key from case_blocks_accounts where id=?"
 	}
 
 	account := Account{}
@@ -34,9 +35,9 @@ func (r *relationalAccountRepository) FindById(id FKInt) (Account, error) {
 func (r *relationalAccountRepository) FindByAccountCode(code string) (Account, error) {
 	var sql string
 	if r.DB.DriverName() == "postgres" {
-		sql = "select * from case_blocks_accounts where nickname=$1"
+		sql = "select id, title, nickname, created_at, updated_at, default_email_from_address, homepage_image_url, cipher_key from case_blocks_accounts where nickname=$1"
 	} else {
-		sql = "select * from case_blocks_accounts where nickname=?"
+		sql = "select id, title, nickname, created_at, updated_at, default_email_from_address, homepage_image_url, cipher_key from case_blocks_accounts where nickname=?"
 	}
 
 	account := Account{}
