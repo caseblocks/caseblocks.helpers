@@ -119,6 +119,7 @@ func NewMongoSession(connectionString string, logger Log) *mgo.Session {
 	if logger == nil {
 		logger = NewConsoleLogger()
 	}
+	logger.Info(fmt.Sprintf("Dialling MongoDB: %s", connectionString))
 	session, err := mgo.Dial(connectionString)
 	PanicToLogIf(err, logger)
 	return session
