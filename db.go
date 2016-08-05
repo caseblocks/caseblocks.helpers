@@ -186,9 +186,19 @@ func DBUpdate(db *sqlx.DB, sql string, params ...interface{}) error {
 	} else if rowsAffected, err := result.RowsAffected(); err != nil {
 		return err
 	} else if rowsAffected == 0 {
-		return fmt.Errorf("Unable to update Saved Search. Record doesn't exist.")
+		return fmt.Errorf("Update affected no rows.")
 	} else {
 		return nil
+	}
+}
+
+func DBUpdateAffected(db *sqlx.DB, sql string, params ...interface{}) (int64, error) {
+	if result, err := db.Exec(sql, params...); err != nil {
+		return 0, err
+	} else if rowsAffected, err := result.RowsAffected(); err != nil {
+		return 0, err
+	} else {
+		return rowsAffected, nil
 	}
 }
 
@@ -200,4 +210,11 @@ func DBInsert(db *sqlx.DB, sql string, params ...interface{}) (FKInt, error) {
 	} else {
 		return FKInt(lastId), nil
 	}
+}
+
+func DBGetId(db *sqlx.DB, sql string, params ...interface{}) (FKInt, error) {
+	var id int64
+	row := db.QueryRow(sql, params...)
+	err := row.Scan(&id)
+	return FKInt(id), err
 }
