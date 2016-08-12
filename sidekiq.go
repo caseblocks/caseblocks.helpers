@@ -42,7 +42,8 @@ func LauchSidekiqJob(queue string, class string, params []map[string]interface{}
 	if skjJsonBytes, err := json.Marshal(skj); err != nil {
 		return err
 	} else {
-		c.Do("RPUSH", "queue:system", fmt.Sprintf("%s", skjJsonBytes))
+		_, err := c.Do("RPUSH", "queue:system", fmt.Sprintf("%s", skjJsonBytes))
+		return err
 	}
 	return nil
 }

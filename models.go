@@ -17,7 +17,7 @@ type TS struct {
 }
 
 type Context struct {
-  CurrentUser   User
+	CurrentUser User
 }
 
 type FKInt int
@@ -112,6 +112,10 @@ type Message struct {
 	Attachments       []string      `json:"attachments"`
 	CreatedAt         time.Time     `bson:"created_at" json:"created_at"`
 	UpdatedAt         time.Time     `bson:"updated_at" json:"updated_at"`
+	ArchivedAt        time.Time     `bson:"archived_at" json:"archived_at"`
+	MarkedReadAt      time.Time     `bson:"marked_read_at" json:"marked_read_at"`
+	ArchivedBy        string        `bson:"archived_by" json:"archived_by"`
+	MarkedReadBy      string        `bson:"marked_read_by" json:"marked_read_by"`
 }
 
 func (m *Message) UnmarshalJSON(data []byte) error {
