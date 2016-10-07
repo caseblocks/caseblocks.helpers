@@ -20,7 +20,17 @@ func RenderJSON(w http.ResponseWriter, payload interface{}) {
 }
 
 func RenderError(w http.ResponseWriter, responseCode int, err error) {
-	bytes, _ := json.Marshal(map[string]string{"message": fmt.Sprintf("%s", err)})
+
+	var msg string
+	switch responseCode {
+	case 422:
+		msg = "Bad request."
+	case 500:
+		msg = "Unable to process request."
+	}
+	errorMsg := fmt.Sprintf("%s %s", msg, err)
+	fmt.Printf("API Error: %s\n", errorMsg)
+	bytes, _ := json.Marshal(map[string]string{"message": errorMsg})
 	w.WriteHeader(responseCode)
 	w.Header().Set(HTTP_CONTENT_TYPE, HTTP_CONTENT_TYPE_JSON)
 	w.Write(bytes)
