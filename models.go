@@ -1,12 +1,13 @@
 package helpers
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"math"
 	"strconv"
 	"time"
+
+	"github.com/pkg/errors"
 
 	"gopkg.in/mgo.v2/bson"
 )
@@ -57,11 +58,11 @@ type Account struct {
 	Id                      FKInt
 	Title                   string
 	Nickname                string
-	HomepageImageUrl        sql.NullString `bson:"homepage_image_url" json:"homepage_image_url" db:"homepage_image_url"`
-	DefaultFromEmailAddress string         `bson:"default_email_from_address" json:"default_email_from_address" db:"default_email_from_address"`
-	CreatedAt               time.Time      `bson:"created_at" json:"created_at" db:"created_at"`
-	UpdatedAt               time.Time      `bson:"updated_at" json:"updated_at" db:"updated_at"`
-	CipherKey               string         `json:"-" db:"cipher_key"`
+	HomepageImageUrl        string    `bson:"homepage_image_url" json:"homepage_image_url" db:"homepage_image_url"`
+	DefaultFromEmailAddress string    `bson:"default_email_from_address" json:"default_email_from_address" db:"default_email_from_address"`
+	CreatedAt               time.Time `bson:"created_at" json:"created_at" db:"created_at"`
+	UpdatedAt               time.Time `bson:"updated_at" json:"updated_at" db:"updated_at"`
+	CipherKey               string    `json:"-" db:"cipher_key"`
 }
 
 type Recipient struct {
@@ -124,7 +125,7 @@ func (m *Message) UnmarshalJSON(data []byte) error {
 		Body              string        `json:"body"`
 		CaseId            bson.ObjectId `json:"case_id"`
 		ConversationId    bson.ObjectId `json:"conversation_id"`
-		AuthorId          string        `json:"author_id"`
+		AuthorId          interface{}   `json:"author_id"`
 		AuthorDisplayName string        `json:"author_display_name"`
 		Recipients        []Recipient   `json:"recipients"`
 		Subject           string        `json:"subject"`
@@ -137,10 +138,22 @@ func (m *Message) UnmarshalJSON(data []byte) error {
 		m.Id = bson.ObjectIdHex(aux.Id)
 	}
 	m.Body = aux.Body
-	author_id, err := strconv.Atoi(aux.AuthorId)
+
+	switch v := aux.AuthorId.(type) {
+	case string:
+		if id, err := strconv.Atoi(v); err != nil {
+			return errors.Wrap(err, "Unable to parse account_id")
+		} else {
+			m.AuthorId = FKInt(id)
+		}
+	case float64:
+		m.AuthorId = FKInt(v)
+	case int64:
+		m.AuthorId = FKInt(v)
+	}
+
 	m.CaseId = aux.CaseId
 	m.ConversationId = aux.ConversationId
-	m.AuthorId = FKInt(author_id)
 	m.AuthorDisplayName = aux.AuthorDisplayName
 	m.Recipients = aux.Recipients
 	m.Subject = aux.Subject

@@ -30,6 +30,7 @@ func RespondWithError(err error, statusCode int, r render.Render) {
 	case 500:
 		msg = "Unable to process request."
 	}
-	fmt.Println(err)
-	r.JSON(statusCode, map[string]interface{}{"error": fmt.Sprintf("%s %s", msg, err)})
+	errorMsg := fmt.Sprintf("%s %s", msg, err)
+	fmt.Println(errorMsg)
+	r.JSON(statusCode, map[string]interface{}{"error": errorMsg})
 }
