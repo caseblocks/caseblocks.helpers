@@ -191,6 +191,10 @@ type CaseType struct {
 	Schemas        []string
 }
 
+func NewBsonID() bson.ObjectId {
+	return bson.NewObjectId()
+}
+
 func (ct CaseType) UriForCaseId(caseId string) string {
 
 	var systemCategory string
