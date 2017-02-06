@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/kr/pretty"
@@ -42,4 +43,51 @@ func Dump(msg string, obj interface{}) {
 	fmt.Printf("%s\n%# v\n", msg, pretty.Formatter(obj))
 
 	// fmt.Printf("%# v")
+}
+
+// doesn't handle multiple accounts yet
+type MockedTeamMemberRepository struct {
+	TeamUsers map[FKInt][]User
+}
+
+func NewMockedTeamMemberRepository() *MockedTeamMemberRepository {
+	teamUsers := make(map[FKInt][]User)
+	return &MockedTeamMemberRepository{TeamUsers: teamUsers}
+}
+
+func (r *MockedTeamMemberRepository) FindByTeamId(accountCode string, id FKInt) ([]User, error) {
+	users, ok := r.TeamUsers[id]
+	if !ok {
+		return []User{}, errors.New("Invalid team id")
+	}
+	return users, nil
+}
+
+func (r *MockedTeamMemberRepository) AddTeamMember(accountCode string, id FKInt, user User) {
+	users, ok := r.TeamUsers[id]
+	if !ok {
+		users = make([]User, 0)
+	}
+	users = append(users, user)
+	r.TeamUsers[id] = users
+}
+
+func NewMockedCaseTypeRepository() *MockedCaseTypeRepository {
+	return &MockedCaseTypeRepository{CaseTypeMap: make(map[FKInt]CaseType)}
+}
+
+type MockedCaseTypeRepository struct {
+	CaseTypeMap map[FKInt]CaseType
+}
+
+func (r *MockedCaseTypeRepository) FindCaseTypeById(accountCode string, caseTypeId FKInt) (CaseType, error) {
+	caseType, ok := r.CaseTypeMap[caseTypeId]
+	if !ok {
+		return caseType, errors.New("Unable to find case type")
+	}
+	return caseType, nil
+}
+
+func (r *MockedCaseTypeRepository) AddCaseType(caseType CaseType) {
+	r.CaseTypeMap[caseType.Id] = caseType
 }

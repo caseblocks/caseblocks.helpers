@@ -12,7 +12,15 @@ type UserRepository interface {
 	FindByEmail(accountCode, email string) (User, error)
 }
 
+type WorkerbotRepository interface {
+	FindWorkerbotByAccount(accountCode string) (User, error)
+}
+
 func NewUserRepository(db *sqlx.DB) UserRepository {
+	return &relationalUserRepository{db}
+}
+
+func NewWorkerbotRepository(db *sqlx.DB) WorkerbotRepository {
 	return &relationalUserRepository{db}
 }
 
@@ -57,6 +65,19 @@ func (r *relationalUserRepository) FindByDisplayName(accountCode, name string) (
 
 	user := User{}
 	err := r.DB.Get(&user, sql, name, accountCode)
+	return user, err
+}
+
+func (r *relationalUserRepository) FindWorkerbotByAccount(accountCode string) (User, error) {
+	var sql string
+	if r.DB.DriverName() == "postgres" {
+		sql = "select u.id, u.account_id, u.is_account_admin, a.nickname, email, display_name, login, u.created_at, u.updated_at, u.authentication_token from case_blocks_users u, case_blocks_accounts a where u.account_id=a.id and u.is_bot=1 and a.nickname=$1"
+	} else {
+		sql = "select u.id, u.account_id, u.is_account_admin, a.nickname, email, display_name, login, u.created_at, u.updated_at, u.authentication_token from case_blocks_users u, case_blocks_accounts a where u.account_id=a.id and u.is_bot=1 and a.nickname=?"
+	}
+
+	user := User{}
+	err := r.DB.Get(&user, sql, accountCode)
 	return user, err
 }
 
