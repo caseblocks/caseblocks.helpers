@@ -91,3 +91,11 @@ func (r *MockedCaseTypeRepository) FindCaseTypeById(accountCode string, caseType
 func (r *MockedCaseTypeRepository) AddCaseType(caseType CaseType) {
 	r.CaseTypeMap[caseType.Id] = caseType
 }
+
+type MockedWorkerbotRepository struct {
+	Workerbot User
+}
+
+func (r *MockedWorkerbotRepository) FindWorkerbotByAccount(accountCode string) (User, error) {
+	return r.Workerbot, nil
+}
