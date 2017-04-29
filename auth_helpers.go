@@ -22,17 +22,21 @@ func FindUserInAccount(userId, accountId FKInt, db *sqlx.DB) (User, error) {
 	return user, getUserErr
 }
 
+func auth_token_header(headerKey string) bool {
+	return strings.ToLower(headerKey) == "auth_token" || strings.ToLower(headerKey) == "x-auth-token"
+}
+
 func FindUserFromId(req *http.Request, res http.ResponseWriter, db *sqlx.DB) (User, error) {
 
 	var token string
 	for headerKey, headerVals := range req.Header {
-		if strings.ToLower(headerKey) == "auth_token" {
+		if auth_token_header(headerKey) {
 			token = headerVals[0]
 		}
 	}
 	req.ParseForm()
 	for formKey, formVals := range req.Form {
-		if strings.ToLower(formKey) == "auth_token" {
+		if auth_token_header(formKey) {
 			token = formVals[0]
 		}
 	}
