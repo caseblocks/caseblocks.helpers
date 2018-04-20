@@ -107,6 +107,7 @@ type Message struct {
 	CaseId            bson.ObjectId `bson:"case_id" json:"case_id"`
 	ConversationId    bson.ObjectId `bson:"conversation_id" json:"conversation_id"`
 	AuthorId          FKInt         `bson:"author_id" json:"author_id"`
+	AuthorEmail       string        `bson:"author_email" json:"author_email"`
 	AuthorDisplayName string        `bson:"author_display_name" json:"author_display_name"`
 	Recipients        []Recipient   `bson:"recipients" json:"recipients"`
 	Subject           string        `json:"subject"`
@@ -126,6 +127,7 @@ func (m *Message) UnmarshalJSON(data []byte) error {
 		CaseId            bson.ObjectId `json:"case_id"`
 		ConversationId    bson.ObjectId `json:"conversation_id"`
 		AuthorId          interface{}   `json:"author_id"`
+		AuthorEmail       string        `json:"author_email"`
 		AuthorDisplayName string        `json:"author_display_name"`
 		Recipients        []Recipient   `json:"recipients"`
 		Subject           string        `json:"subject"`
