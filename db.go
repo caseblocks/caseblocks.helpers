@@ -64,7 +64,7 @@ func FindUserDBConnString() string {
 	return FindDBConnString()
 }
 
-func FindConnString() string {
+func FindRedisConnString() string {
 	if os.Getenv("REDIS_HOST") != "" {
 		return os.Getenv("REDIS_HOST")
 	} else if os.Getenv("REDIS_PORT_6379_TCP_ADDR") != "" && os.Getenv("REDIS_PORT_6379_TCP_PORT") != "" {
