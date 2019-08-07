@@ -30,7 +30,7 @@ type SidekiqJob struct {
 
 func LauchSidekiqJob(queue string, class string, params []map[string]interface{}) error {
 
-	c, err := redis.Dial("tcp", FindRedisConnString())
+	c, err := redis.Dial("tcp", FindConnString())
 	if err != nil {
 		return err
 	}

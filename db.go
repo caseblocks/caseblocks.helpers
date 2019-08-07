@@ -12,7 +12,7 @@ import (
 )
 
 func GUIDString() string {
-	return uuid.NewV4().String()
+	return uuid.Must(uuid.NewV4()).String()
 }
 
 func FindCBAPIEndpoint() string {
@@ -64,7 +64,7 @@ func FindUserDBConnString() string {
 	return FindDBConnString()
 }
 
-func FindRedisConnString() string {
+func FindConnString() string {
 	if os.Getenv("REDIS_HOST") != "" {
 		return os.Getenv("REDIS_HOST")
 	} else if os.Getenv("REDIS_PORT_6379_TCP_ADDR") != "" && os.Getenv("REDIS_PORT_6379_TCP_PORT") != "" {
