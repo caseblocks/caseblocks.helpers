@@ -12,7 +12,7 @@ import (
 )
 
 func GUIDString() string {
-	return uuid.Must(uuid.NewV4()).String()
+	return uuid.NewV4().String()
 }
 
 func FindCBAPIEndpoint() string {
