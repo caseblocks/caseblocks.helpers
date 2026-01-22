@@ -6,13 +6,14 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	uuid "github.com/satori/go.uuid"
+	"github.com/gofrs/uuid/v5"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
 
 func GUIDString() string {
-	return uuid.NewV4().String()
+	id, err := uuid.NewV4()
+	return uuid.Must(id, err).String()
 }
 
 func FindCBAPIEndpoint() string {

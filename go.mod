@@ -1,6 +1,6 @@
 module github.com/caseblocks/caseblocks.helpers
 
-go 1.19
+go 1.25
 
 require (
 	github.com/codegangsta/negroni v1.0.0
@@ -8,12 +8,12 @@ require (
 	github.com/garyburd/redigo v1.6.4
 	github.com/gin-gonic/gin v1.8.1
 	github.com/go-martini/martini v0.0.0-20170121215854-22fa46961aab
+	github.com/gofrs/uuid/v5 v5.0.0
 	github.com/gorilla/mux v1.8.0
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/kr/pretty v0.3.1
 	github.com/martini-contrib/render v0.0.0-20150707142108-ec18f8345a11
 	github.com/pkg/errors v0.9.1
-	github.com/satori/go.uuid v1.2.0
 	golang.org/x/crypto v0.3.0
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22
 )
